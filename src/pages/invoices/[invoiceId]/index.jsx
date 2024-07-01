@@ -7,7 +7,7 @@ import { useMessage } from "@/components/Message";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import Link from "next/link";
 import { ToWords } from 'to-words';
-import DownloadDetails from "@/pages/download";
+import DownloadDetails from "@/components/download";
 import DownloadButton from "@/components/DownloadButton";
 const Table = dynamic(() => import('antd/es/table'), { ssr: false });
 

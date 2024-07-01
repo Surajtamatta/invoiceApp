@@ -1,14 +1,11 @@
-import React, { useRef,forwardRef } from "react";
-import { useRouter } from "next/router";
-import { MongoClient, ObjectId } from "mongodb";
+import React, {forwardRef } from "react";
 import Image from "next/image";
 import dynamic from 'next/dynamic';
 import { ToWords } from 'to-words';
 const Table = dynamic(() => import('antd/es/table'), { ssr: false });
 
 
-const DownloadDetails = forwardRef(({data}, ref) => {
-
+const DownloadDetails = React.memo(forwardRef(({data}, ref) => {
   const toWords = new ToWords({
     localeCode: 'en-IN',
     converterOptions: {
@@ -275,7 +272,7 @@ const amountdetail = {
 
      
   );
-});
+}), () => true);
 
 export default DownloadDetails;
 
@@ -284,83 +281,3 @@ export default DownloadDetails;
 
 
 
-
-
-
-
-
-
-
-export async function getStaticPaths() {
-  const client = await MongoClient.connect(
-    `mongodb+srv://${process.env.USER__NAME}:${process.env.USER__PASSWORD}@cluster0.liesnjz.mongodb.net/${process.env.DATABASE__NAME}?retryWrites=true&w=majority&appName=Cluster0`
-  );
-
-  try {
-    const db = client.db();
-    const collection = db.collection("allInvoices");
-    const invoices = await collection.find({}, { projection: { _id: 1 } }).toArray();
-
-    return {
-      paths: invoices.map((invoice) => ({
-        params: { invoiceId: invoice._id.toString() },
-      })),
-      fallback: 'blocking',
-    };
-  } catch (error) {
-    console.error("Error fetching invoices for getStaticPaths:", error);
-    return {
-      paths: [],
-      fallback: 'blocking',
-    };
-  } finally {
-    await client.close();
-  }
-}
-export async function getStaticProps(context) {
-  const { params } = context;
-  const client = await MongoClient.connect(
-    `mongodb+srv://${process.env.USER__NAME}:${process.env.USER__PASSWORD}@cluster0.liesnjz.mongodb.net/${process.env.DATABASE__NAME}?retryWrites=true&w=majority&appName=Cluster0`
-  );
-
-  try {
-    const db = client.db();
-    const collection = db.collection("allInvoices");
-    const invoice = await collection.findOne({ _id: new ObjectId(params.invoiceId) });
-
-    if (!invoice) {
-      return {
-        notFound: true,
-      };
-    }
-
-    // Ensure all fields are defined or set to null
-    const sanitizedInvoice = {
-      id: invoice._id.toString(),
-      sellerDetails: invoice.sellerDetails || null,
-      billingDetails: invoice.billingDetails || null,
-      shippingDetails: invoice.shippingDetails || null,
-      invoiceDetails: invoice.invoiceDetails || null,
-      paymentDetails: invoice.paymentDetails || null,
-      items: invoice.items || null,
-      status: invoice.status || null,
-      totalAmount: invoice.totalAmount || null,
-    };
-
-    return {
-      props: {
-        data: sanitizedInvoice,
-      },
-      revalidate: 60,
-    };
-  } catch (error) {
-    console.error("Error fetching invoice:", error);
-    return {
-      props: {
-        data: null,
-      },
-    };
-  } finally {
-    await client.close();
-  }
-}
