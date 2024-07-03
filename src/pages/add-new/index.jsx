@@ -67,37 +67,36 @@ const AddNew = () => {
 
   const createInvoice = async (status) => {
     try {
-      if (
-        !sellerName.current?.value ||
-        !sellerPan.current?.value ||
-        !sellerGST.current?.value ||
-        !sellerAddress.current?.value ||
-        !sellerCity.current?.value ||
-        !sellerPostalCode.current?.value ||
-        !sellerCountry.current?.value ||
-        !billingName.current?.value ||
-        !billingAddress.current?.value ||
-        !billingCity.current?.value ||
-        !billingPostalCode.current?.value ||
-        !billingCountry.current?.value ||
-        !shippingName.current?.value ||
-        !shippingAddress.current?.value ||
-        !shippingCity.current?.value ||
-        !shippingPostalCode.current?.value ||
-        !shippingCountry.current?.value ||
-        !invoiceDate.current?.value ||
-        !placeOfSupply.current?.value ||
-        !orderNo.current?.value ||
-        !orderDate.current?.value ||
-        !taxType.current?.value ||
-        !taxRate.current?.value ||
-        items.length === 0
-      ) {
-        messageApi.open({
-          type: "warning",
-          content: "All fields are required. Must provide valid data",
-        });
+      // Check for empty fields
+      const requiredFields = [
+        sellerName.current?.value,
+        sellerPan.current?.value,
+        sellerGST.current?.value,
+        sellerAddress.current?.value,
+        sellerCity.current?.value,
+        sellerPostalCode.current?.value,
+        sellerCountry.current?.value,
+        billingName.current?.value,
+        billingAddress.current?.value,
+        billingCity.current?.value,
+        billingPostalCode.current?.value,
+        billingCountry.current?.value,
+        shippingName.current?.value,
+        shippingAddress.current?.value,
+        shippingCity.current?.value,
+        shippingPostalCode.current?.value,
+        shippingCountry.current?.value,
+        invoiceDate.current?.value,
+        placeOfSupply.current?.value,
+        orderNo.current?.value,
+        orderDate.current?.value,
+      ];
+  
+      if (requiredFields.some(field => !field)) {
+        // If any required field is empty, show warning
+        messageApi.warning("All fields are required. Please provide valid data.");
       } else {
+        // All fields are filled, proceed to create invoice
         const payload = {
           sellerDetails: {
             name: sellerName.current.value,
@@ -131,7 +130,6 @@ const AddNew = () => {
           status: status,
           items: items,
           totalAmount: totalAmount,
-          
         };
   
         const res = await fetch("/api/add-new", {
@@ -143,19 +141,12 @@ const AddNew = () => {
         });
   
         const data = await res.json();
-        if (messageApi) {
-          messageApi.success(data?.message);
-          router.push(`/invoices/${data._id}`);
-        } else {
-          console.error("messageApi is not defined");
-        }
+        messageApi.success(data?.message);
+        router.push(`/invoices/${data._id}`);
       }
     } catch (error) {
-      if (messageApi) {
-        messageApi.error(error);
-      } else {
-        console.error("messageApi is not defined");
-      }
+      messageApi.error(error);
+      console.error("Error creating invoice:", error);
     }
   };
   
@@ -213,7 +204,7 @@ const AddNew = () => {
             <h3 className="bill__title">Billing Details:</h3>
             <div className="form__group inline__form-group">
               <div>
-                <p>Client Name:</p>
+                <p>Name:</p>
                 <input type="text" ref={billingName} />
               </div>
               <div>
@@ -240,7 +231,7 @@ const AddNew = () => {
             <h3 className="bill__title">Shipping Details:</h3>
             <div className="form__group inline__form-group">
               <div>
-                <p>Client Name:</p>
+                <p>Name:</p>
                 <input type="text" ref={shippingName} />
               </div>
               <div>

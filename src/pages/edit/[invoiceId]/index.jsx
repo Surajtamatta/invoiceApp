@@ -363,6 +363,7 @@ const AddNew = ({ data }) => {
                       <input 
                       type="text" 
                       name="taxType"
+                      value={item.taxType}
                       onChange={(e) => handlerChange(e, i)}
                       />
 
@@ -372,6 +373,7 @@ const AddNew = ({ data }) => {
                       <input 
                       type="number"
                       name="taxRate"
+                      value={item.taxRate}
                       onChange={(e) => handlerChange(e, i)} 
                       />
                    </div>
