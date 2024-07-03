@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { useMessage } from "@/components/Message";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FaArrowLeftLong } from "react-icons/fa6";
 const AddNew = () => {
   const messageApi = useMessage();
   const router = useRouter();
@@ -156,7 +157,11 @@ const AddNew = () => {
     <div className="main__container">
 
       <div className="new__invoice">
-     
+      <div className="details_boxwrapper">
+        <Link  href={'/'} className="back__btn">
+          <FaArrowLeftLong /> 
+        </Link >
+      </div>
         <div className="new__invoice-header">
           <h2>New Invoice</h2>
         </div>

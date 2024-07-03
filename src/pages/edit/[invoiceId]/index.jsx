@@ -1,10 +1,12 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMessage } from "@/components/Message";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MongoClient, ObjectId } from "mongodb";
+
 
 const AddNew = ({ data }) => {
   const messageApi = useMessage();
@@ -42,10 +44,10 @@ const AddNew = ({ data }) => {
     const { name, value } = event.target;
     const list = [...items];
     list[i][name] = value;
-    const netAmount = list[i].itemquantity * list[i].itemprice - list[i].itemdiscount;
+    const netAmount = (list[i].itemprice * (list[i].itemdiscount / 100)) ;
     const taxAmount = netAmount * (list[i].taxRate / 100);
-    const totalAmount = netAmount + taxAmount;
-    list[i]["total"] = totalAmount;
+    const totalAmount = (netAmount + taxAmount) * list[i].itemquantity ;
+    list[i]["total"] = totalAmount.toFixed(2);
     setItems(list);
   };
 
@@ -54,9 +56,9 @@ const AddNew = ({ data }) => {
     updatedItems.splice(i, 1);
     setItems(updatedItems);
   };
-
-  const totalAmount = items?.reduce((acc, curr) => acc + curr.total, 0);
-
+  console.log(items)
+  const totalAmount = items?.reduce((acc, curr) => acc + parseFloat(curr.total), 0);
+console.log(totalAmount)
   const createInvoice = async (invoiceId,status) => {
     try {
       const payload = {
@@ -120,9 +122,15 @@ const AddNew = ({ data }) => {
   return (
     <div className="main__container">
       <div className="new__invoice">
+      <div className="details_boxwrapper">
+        <Link  href={'/'} className="back__btn">
+          <FaArrowLeftLong /> 
+        </Link >
+      </div>
         <div className="new__invoice-header">
           <h2>Edit Invoice</h2>
         </div>
+        
         <div className="new__invoice-body">
           <div className="bill__from">
             <h3 className="bill__title">Seller Details:</h3>

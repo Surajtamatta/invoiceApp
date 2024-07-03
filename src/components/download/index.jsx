@@ -81,11 +81,11 @@ const invoicedetail = {
       unitprice: item?.itemprice,
       quantity: item?.itemquantity,
       discount: item?.itemdiscount,
-      netamount: (item?.itemprice * item?.itemquantity) - ((item?.itemprice * item?.itemquantity) * (item?.itemdiscount / 100)).toFixed(2),
+      netamount:((item?.itemprice) * (item?.itemdiscount / 100)).toFixed(2),
       taxRate: item?.taxRate,
       taxType: item?.taxType,
-      taxamount: ((item?.itemprice * item?.itemquantity) * (item?.taxRate / 100)).toFixed(2),
-      totalamount: ((item?.itemprice * item?.itemquantity) + ((item?.itemprice * item?.itemquantity) * (item?.taxRate / 100)) - ((item?.itemprice * item?.itemquantity) * (item?.itemdiscount / 100))).toFixed(2),
+      taxamount: (((item?.itemprice) * (item?.itemdiscount / 100)) * (item?.taxRate / 100)).toFixed(2),
+      totalamount: ((((item?.itemprice) * (item?.itemdiscount / 100)) + (((item?.itemprice) * (item?.itemdiscount / 100)) * (item?.taxRate / 100)))*item?.itemquantity).toFixed(2),
     })),
     columns: [
       {
@@ -140,9 +140,9 @@ const invoicedetail = {
   };
 
 const total = data?.items?.reduce((accumulator, item) => {
-  const totalNet = item?.itemprice * item?.itemquantity - (item?.itemprice * item?.itemquantity * (item?.itemdiscount / 100));
-  const totalTax = item?.itemprice * item?.itemquantity * (item?.taxRate / 100);
-  const grandTotal = item?.itemprice * item?.itemquantity + totalTax - totalNet;
+  const totalNet = (((item?.itemprice) * (item?.itemdiscount / 100)) + (((item?.itemprice) * (item?.itemdiscount / 100)) * (item?.taxRate / 100)))*item?.itemquantity;
+  const totalTax = ((item?.itemprice) * (item?.itemdiscount / 100)) * (item?.taxRate / 100);
+  const grandTotal = totalTax + totalNet;
 
   accumulator.totalnet += totalNet;
   accumulator.totaltax += totalTax;
